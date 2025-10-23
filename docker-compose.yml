@@ -19,6 +19,8 @@ services:
     restart: always
     healthcheck:
       disable: false
+    networks:
+      - net
 
   immich-machine-learning:
     container_name: immich_machine_learning
@@ -35,6 +37,8 @@ services:
     restart: always
     healthcheck:
       disable: false
+    networks:
+      - net
 
   redis:
     container_name: immich_redis
@@ -42,6 +46,8 @@ services:
     healthcheck:
       test: redis-cli ping || exit 1
     restart: always
+    networks:
+      - net
 
   database:
     container_name: immich_postgres
@@ -58,6 +64,12 @@ services:
       - ${DB_DATA_LOCATION}:/var/lib/postgresql/data
     shm_size: 128mb
     restart: always
+    networks:
+      - net
+
+networks:
+  net:
+    external: false
 
 volumes:
   model-cache:
