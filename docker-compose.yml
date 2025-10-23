@@ -44,11 +44,6 @@ services:
       disable: false
     networks:
       - net
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - capabilities: [gpu]
 
   redis:
     container_name: immich-redis
