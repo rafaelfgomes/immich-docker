@@ -37,8 +37,7 @@ services:
     group_add:
       - video
     devices:
-      - /dev/dri/card1:/dev/dri/card1
-      - /dev/dri/renderD129:/dev/dri/renderD129
+      - /dev/dri:/dev/dri
 
   openvino:
     device_cgroup_rules:
