@@ -36,9 +36,18 @@ services:
     environment:
       - HSA_OVERRIDE_GFX_VERSION=10.3.0
       - ROC_ENABLE_PRE_VEGA=1
-    env_file:
-      - .env
+      - IMMICH_PORT=${IMMICH_PORT:-2283}
+      - IMMICH_HOST=immich-server
+      - UPLOAD_LOCATION=${UPLOAD_LOCATION}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_DATABASE_NAME=${DB_DATABASE_NAME}
+      - REDIS_HOST=immich-redis
+      - DATABASE_HOST=immich-postgres
+      - DB_DATA_LOCATION=${DB_DATA_LOCATION}
     restart: always
+    depends_on:
+      - immich-server
     networks:
       - net
 
