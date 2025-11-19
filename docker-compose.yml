@@ -17,6 +17,7 @@ services:
     depends_on:
       - redis
       - database
+      - immich-machine-learning
     restart: always
     networks:
       - net
@@ -46,8 +47,6 @@ services:
       - DATABASE_HOST=immich-postgres
       - DB_DATA_LOCATION=${DB_DATA_LOCATION}
     restart: always
-    depends_on:
-      - immich-server
     networks:
       - net
 
