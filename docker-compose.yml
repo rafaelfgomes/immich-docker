@@ -28,15 +28,13 @@ services:
     image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
     container_name: immich-machine-learning
     hostname: immich-machine-learning
-    #extends: # uncomment this section for hardware acceleration - see https://docs.immich.app/features/ml-hardware-acceleration
-    #   file: hwaccel.ml.yml
-    #   service: rocm # set to one of [armnn, cuda, rocm, openvino, openvino-wsl, rknn] for accelerated inference - use the `-wsl` version for WSL2 where applicable
+    extends: # uncomment this section for hardware acceleration - see https://docs.immich.app/features/ml-hardware-acceleration
+       file: hwaccel.ml.yml
+       service: openvino # set to one of [armnn, cuda, rocm, openvino, openvino-wsl, rknn] for accelerated inference - use the `-wsl` version for WSL2 where applicable
     volumes:
       - ${MODEL_CACHE_FOLDER:-./model_cache}:/cache
       - /etc/localtime:/etc/localtime:ro
     environment:
-      - HSA_OVERRIDE_GFX_VERSION=10.3.0
-      - ROC_ENABLE_PRE_VEGA=1
       - IMMICH_SERVER_URL=http://immich-server:${IMMICH_PORT:-2283}
     restart: always
     networks:
