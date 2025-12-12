@@ -43,8 +43,7 @@ services:
 
   vaapi:
     devices:
-      - /dev/dri/card1:/dev/dri/card1
-      - /dev/dri/renderD129:/dev/dri/renderD129
+      - /dev/dri:/dev/dri
 
   vaapi-wsl: # use this for VAAPI if you're running Immich in WSL2
     devices:
