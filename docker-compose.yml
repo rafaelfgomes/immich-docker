@@ -12,15 +12,17 @@ services:
       - /etc/localtime:/etc/localtime:ro
     env_file:
       - .env
-    ports:
-      - '${IMMICH_PORT:-2283}:2283'
     depends_on:
       - redis
       - database
       - immich-machine-learning
     restart: always
+    healthcheck:
+      disable: false
     networks:
-      - net
+      local:
+      external:
+        ipv4_address: ${IMMICH_IP}
 
   immich-machine-learning:
     # For hardware acceleration, add one of -[armnn, cuda, rocm, openvino, rknn] to the image tag.
@@ -30,23 +32,27 @@ services:
     hostname: immich-machine-learning
     extends: # uncomment this section for hardware acceleration - see https://docs.immich.app/features/ml-hardware-acceleration
        file: hwaccel.ml.yml
-       service: openvino # set to one of [armnn, cuda, rocm, openvino, openvino-wsl, rknn] for accelerated inference - use the `-wsl` version for WSL2 where applicable
+       service: cpu # set to one of [armnn, cuda, rocm, openvino, openvino-wsl, rknn] for accelerated inference - use the `-wsl` version for WSL2 where applicable
     volumes:
       - ${MODEL_CACHE_FOLDER:-./model_cache}:/cache
       - /etc/localtime:/etc/localtime:ro
     environment:
-      - IMMICH_SERVER_URL=http://immich-server:${IMMICH_PORT:-2283}
+      - IMMICH_SERVER_URL=http://immich-server:2283
     restart: always
+    healthcheck:
+      disable: false
     networks:
-      - net
+      local:
 
   redis:
-    image: docker.io/valkey/valkey:8@sha256:81db6d39e1bba3b3ff32bd3a1b19a6d69690f94a3954ec131277b9a26b95b3aa
+    image: docker.io/valkey/valkey:9@sha256:546304417feac0874c3dd576e0952c6bb8f06bb4093ea0c9ca303c73cf458f63
     container_name: immich-redis
     hostname: immich-redis
+    healthcheck:
+      test: redis-cli ping || exit 1
     restart: always
     networks:
-      - net
+      local:
 
   database:
     image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23
@@ -65,9 +71,14 @@ services:
       - /etc/localtime:/etc/localtime:ro
     shm_size: 128mb
     restart: always
+    healthcheck:
+      disable: false
     networks:
-      - net
+      local:
 
 networks:
-  net:
-    external: false
+  external:
+    external: true
+    name: ${EXTERNAL_NETWORK_NAME}
+  local:
+    name: immich-local-network
